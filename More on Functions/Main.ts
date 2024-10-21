@@ -143,3 +143,169 @@ function filter2<Type, Func extends (arg: Type) => boolean>(
 function greet(s: String) {
   console.log(s);
 }
+
+// optional parameters
+function f(n: number, x?: number) {
+  console.log(n.toFixed());
+  console.log(n.toFixed(3));
+}
+
+f(3);
+f(3, 1);
+
+// Optional Parameters in Callbacks
+function myForEach(arr: any[], callback: (arg: any, index?: number) => void) {
+  for (let i = 0; i < arr.length; i++) {
+    callback(arr[i], i);
+  }
+}
+
+myForEach([1, 2, 3], (a) => console.log(a));
+myForEach([1, 2, 3], (a, i) => console.log(a, i));
+
+// Function overloads
+function makeDate(timestamp): Date;
+function makeDate(m: number, d: number, y: number): Date;
+function makeDate(mOrTimestamp: number, d?: number, y?: number): Date {
+  if (d !== undefined && y !== undefined) {
+    return new Date(d, mOrTimestamp, y);
+  } else {
+    return new Date(mOrTimestamp);
+  }
+}
+
+const d1 = makeDate(12345678);
+const d2 = makeDate(5, 5, 5);
+const d3 = makeDate(1, 3);
+
+// Overload Signatures and the Implementation Signature
+function overSing(x: string): void;
+function overSing(x: boolean): void;
+function overSing(x: string) {}
+
+function overSing1(x: string): string;
+// Return type isn't right
+function overSing1(x: number): boolean;
+function overSing1(x: string | number) {
+  return "oops";
+}
+
+// Writing Good Overloads
+function len(s: string): number;
+function len(arr: any[]): number;
+function len(x: any[] | string) {
+  return x.length;
+}
+
+// Declaring this in a Function
+const user = {
+  id: 123,
+  admin: false,
+  becomeAdmin: function () {
+    this.admin = true;
+  },
+};
+
+interface DB {
+  filterUsers(filter: (this: User) => boolean): User[];
+}
+
+const db = getDB();
+const admins = db.filterUsers(function (this: User) {
+  return this.admin;
+});
+
+// Other Types to Know AboutS
+function noop() {
+  return;
+}
+
+function f1(a: any) {
+  a.b();
+}
+
+function f2(a: unknown) {
+  a.b();
+}
+
+function fail(msg: string): never {
+  throw new Error(msg);
+}
+
+function fn2(x: string | number) {
+  if (typeof x === "string") {
+    // do something
+  } else if (typeof x === "number") {
+    // do something else
+  } else {
+    x; // has type 'never'!
+  }
+}
+
+function doSomethings1(f: Function) {
+  return f(1, 2, 3);
+}
+
+// Rest Parameters and Arguments
+function multiply(n: number, ...m: number[]) {
+  return m.map((x) => n * x);
+}
+// 'er' gets value [10, 20, 30, 40]
+const er = multiply(10, 1, 2, 3, 4);
+
+const arr1 = [1, 2, 3];
+const arr2 = [4, 5, 6];
+arr1.push(...arr2);
+
+const args = [8, 5] as const;
+const angle = Math.atan2(...args);
+
+// Parameter Destructuring
+// function sum({ a, b, c }) {
+//   console.log(a + b + c);
+// }
+// sum({ a: 10, b: 3, c: 9 });
+
+// Same as prior example
+// function sum({ a, b, c }: { a: number; b: number; c: number }) {
+//   console.log(a + b + c);
+// }
+
+type ABC = { a: number; b: number; c: number };
+function sum({ a, b, c }: ABC) {
+  console.log(a + b + c);
+}
+
+// Assignability of Functions
+type voidFunc = () => void;
+
+const f5: voidFunc = () => {
+  return true;
+};
+
+const f4: voidFunc = () => true;
+
+const f3: voidFunc = function () {
+  return true;
+};
+
+const v1 = f4();
+
+const v2 = f5();
+
+const v3 = f3();
+
+const src = [1, 2, 3];
+const dst = [0];
+
+src.forEach((el) => dst.push(el));
+
+function f7(): void {
+  // @ts-expect-error
+  return true;
+}
+
+const f6 = function (): void {
+  // @ts-expect-error
+  return true;
+};
